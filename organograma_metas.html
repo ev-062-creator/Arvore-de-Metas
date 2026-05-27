@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNJ — Organograma de Metas</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f4f3ef; --panel: #fff; --border: #dddbd2; --border2: #c0bdb2;
+  --text: #1a1916; --muted: #6b6860; --dim: #a09d94; --ink: #11100e;
+  --l0-bg: #26215C; --l0-fg: #EEEDFE;
+  --l1-bg: #085041; --l1-fg: #E1F5EE;
+  --l2-bg: #412402; --l2-fg: #FAEEDA;
+  --l3-bg: #2d5a8e; --l3-fg: #ddeeff;
+  --l4-bg: #4A1B0C; --l4-fg: #FAECE7;
+  --l5-bg: #042C53; --l5-fg: #E6F1FB;
+}
+
+body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 13px; min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── TOPBAR ── */
+.topbar { background: var(--ink); color: #f0efe8; height: 56px; display: flex; align-items: center; flex-shrink: 0; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #2a2a28; }
+.top-brand { font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; letter-spacing: .08em; padding: 0 18px; border-right: 1px solid #2a2a28; height: 100%; display: flex; align-items: center; color: #b0afaa; white-space: nowrap; }
+.top-block { display: flex; align-items: center; gap: 8px; padding: 0 16px; height: 100%; border-right: 1px solid #2a2a28; }
+.top-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: .18em; text-transform: uppercase; color: #555; white-space: nowrap; }
+.meta-val-input { background: transparent; border: none; border-bottom: 1px solid #444; color: #f0efe8; font-family: 'IBM Plex Mono', monospace; font-size: 18px; font-weight: 500; width: 180px; outline: none; padding: 1px 4px; }
+.meta-val-input:focus { border-color: #7c9fc4; }
+.meta-date-input { background: transparent; border: none; border-bottom: 1px solid #444; color: #c0cfcc; font-family: 'IBM Plex Mono', monospace; font-size: 11px; width: 110px; outline: none; padding: 1px 4px; }
+.meta-date-input:focus { border-color: #7c9fc4; }
+.date-arrow { color: #444; font-size: 11px; }
+.top-stats { display: flex; align-items: center; gap: 24px; padding: 0 18px; flex: 1; }
+.tstat { display: flex; flex-direction: column; gap: 1px; }
+.tstat-l { font-family: 'IBM Plex Mono', monospace; font-size: 7px; letter-spacing: .15em; text-transform: uppercase; color: #555; }
+.tstat-v { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #b0afaa; }
+.top-actions { display: flex; gap: 8px; margin-left: auto; padding-right: 14px; }
+.tbtn { background: #1e1e1c; border: 1px solid #333; color: #b0afaa; font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 11px; border-radius: 4px; cursor: pointer; transition: all .12s; white-space: nowrap; }
+.tbtn:hover { background: #2a2a28; color: #f0efe8; }
+.tbtn.active { background: #26215C; border-color: #534AB7; color: #EEEDFE; }
+
+/* ── CONTROLS ── */
+.controls { background: var(--panel); border-bottom: 1px solid var(--border); padding: 8px 20px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.ctrl-grp { display: flex; align-items: center; gap: 7px; }
+.ctrl-lbl { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.seg { display: flex; }
+.seg-b { padding: 4px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; border: 0.5px solid var(--border2); background: none; color: var(--muted); cursor: pointer; transition: all .12s; }
+.seg-b:first-child { border-radius: 4px 0 0 4px; }
+.seg-b:last-child  { border-radius: 0 4px 4px 0; }
+.seg-b:not(:last-child) { border-right: none; }
+.seg-b.on { background: var(--ink); color: #f0efe8; border-color: var(--ink); }
+.seg-b:hover:not(.on) { background: var(--bg); color: var(--text); }
+.view-date { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 7px; border: 0.5px solid var(--border2); border-radius: 4px; background: none; color: var(--text); outline: none; width: 108px; }
+.view-date:focus { border-color: var(--text); }
+.view-info { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--dim); white-space: nowrap; }
+.fsel { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 4px 7px; border: 0.5px solid var(--border2); border-radius: 4px; background: none; color: var(--text); outline: none; cursor: pointer; }
+.zbtn { width: 24px; height: 24px; border: 0.5px solid var(--border2); border-radius: 4px; background: none; color: var(--muted); font-size: 14px; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+.zbtn:hover { background: var(--bg); }
+
+/* ── CANVAS ── */
+.canvas-wrap { flex: 1; overflow: auto; background: var(--bg); }
+.canvas { transform-origin: top center; transition: transform .18s; padding: 36px 50px 80px; display: inline-block; min-width: 100%; }
+
+/* ── NODE ── */
+.nb { border-radius: 6px; padding: 7px 14px 6px; text-align: center; white-space: nowrap; cursor: pointer; user-select: none; position: relative; transition: transform .12s, filter .12s; }
+.nb:hover { transform: translateY(-1px); filter: brightness(1.1); }
+.nb:active { transform: scale(.97); }
+.nb.l0 { background: var(--l0-bg); color: var(--l0-fg); min-width: 160px; border-radius: 10px; padding: 10px 22px; }
+.nb.l1 { background: var(--l1-bg); color: var(--l1-fg); min-width: 118px; }
+.nb.l2 { background: var(--l2-bg); color: var(--l2-fg); min-width: 100px; }
+.nb.l3 { background: var(--l3-bg); color: var(--l3-fg); min-width: 110px; }
+.nb.l4 { background: var(--l4-bg); color: var(--l4-fg); min-width: 88px; }
+.nb.l5 { background: var(--l5-bg); color: var(--l5-fg); min-width: 78px; }
+.nb.togglable::after { content: '▾'; position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 9px; opacity: .45; }
+.nb.togglable.shut::after { content: '▸'; }
+.nb-rank { font-family: 'IBM Plex Mono', monospace; font-size: 8px; opacity: .5; margin-bottom: 1px; }
+.nb-name { font-weight: 500; font-size: 11px; line-height: 1.2; }
+.nb-val  { font-family: 'IBM Plex Mono', monospace; font-size: 10px; opacity: .72; margin-top: 2px; }
+.nb-pct  { font-family: 'IBM Plex Mono', monospace; font-size: 9px; opacity: .48; margin-top: 1px; }
+.nb-qty  { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: rgba(255,255,255,.6); margin-top: 2px; background: rgba(255,255,255,.1); border-radius: 3px; padding: 1px 5px; display: inline-block; }
+.nb-bar  { height: 2px; background: rgba(255,255,255,.15); border-radius: 99px; margin-top: 5px; overflow: hidden; }
+.nb-bar-fill { height: 100%; background: rgba(255,255,255,.4); border-radius: 99px; }
+
+/* ── TREE ── */
+.oc-col  { display: flex; flex-direction: column; align-items: center; }
+.oc-row  { display: flex; flex-direction: row; align-items: flex-start; gap: 8px; }
+.oc-stem { width: 1px; background: var(--border2); flex-shrink: 0; }
+.oc-conn { position: relative; width: 100%; pointer-events: none; }
+.oc-conn svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
+
+/* ── LEGEND ── */
+.legend { background: var(--panel); border-top: 1px solid var(--border); padding: 7px 20px; display: flex; align-items: center; gap: 16px; flex-shrink: 0; flex-wrap: wrap; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+.leg-dot { width: 9px; height: 9px; border-radius: 3px; flex-shrink: 0; }
+
+/* ── TOOLTIP ── */
+.tt { position: fixed; background: var(--panel); border: 0.5px solid var(--border2); border-radius: 7px; padding: 10px 13px; font-size: 12px; pointer-events: none; z-index: 999; display: none; min-width: 190px; }
+.tt-name { font-weight: 600; font-size: 13px; margin-bottom: 5px; color: var(--text); }
+.tt-row  { display: flex; justify-content: space-between; gap: 16px; font-size: 11px; color: var(--muted); margin-top: 3px; }
+.tt-row span:last-child { font-family: 'IBM Plex Mono', monospace; color: var(--text); font-weight: 500; }
+
+/* ── SIDE PANEL ── */
+.side { position: fixed; right: 0; top: 56px; width: 290px; height: calc(100vh - 56px); background: var(--panel); border-left: 1px solid var(--border); overflow-y: auto; z-index: 50; transform: translateX(100%); transition: transform .2s; }
+.side.open { transform: translateX(0); }
+.side-head { display: flex; align-items: center; justify-content: space-between; padding: 13px 15px; border-bottom: 1px solid var(--border); position: sticky; top: 0; background: var(--panel); }
+.side-title { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; }
+.close-x { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--muted); line-height: 1; padding: 0 3px; }
+.psec { border-bottom: 1px solid var(--border); }
+.psec-hd { padding: 9px 15px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+.psec-hd:hover { background: var(--bg); }
+.psec-bd { padding: 5px 15px 10px; display: none; }
+.psec-bd.open { display: block; }
+.sbadge { font-family: 'IBM Plex Mono', monospace; font-size: 10px; padding: 1px 6px; border-radius: 3px; font-weight: 500; }
+.sok  { background: #e1f5ee; color: #085041; }
+.swrn { background: #faeeda; color: #412402; }
+.serr { background: #faece7; color: #4A1B0C; }
+.prow { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; }
+.prow-lbl { flex: 1; font-size: 11px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.prow-inp { width: 62px; text-align: right; border: 0.5px solid var(--border2); border-radius: 4px; padding: 3px 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; outline: none; background: var(--bg); color: var(--text); }
+.prow-inp:focus { border-color: var(--text); }
+.prow-sign { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--dim); }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="top-brand">CNJ // ORGANOGRAMA DE METAS</div>
+
+  <div class="top-block">
+    <span class="top-lbl">Meta R$</span>
+    <input class="meta-val-input" id="inMeta" type="text" value="45.000.000"
+           oninput="onMeta(this.value)" autocomplete="off" spellcheck="false">
+  </div>
+
+  <div class="top-block">
+    <span class="top-lbl">Período</span>
+    <input class="meta-date-input" type="date" id="inMetaFrom" onchange="onMetaDates()" oninput="onMetaDates()">
+    <span class="date-arrow">→</span>
+    <input class="meta-date-input" type="date" id="inMetaTo" onchange="onMetaDates()" oninput="onMetaDates()">
+  </div>
+
+  <div class="top-stats">
+    <div class="tstat"><span class="tstat-l">Visualizando</span><span class="tstat-v" id="st-view">—</span></div>
+    <div class="tstat"><span class="tstat-l">Meta período</span><span class="tstat-v" id="st-mp">—</span></div>
+    <div class="tstat"><span class="tstat-l">∑ Regionais</span><span class="tstat-v" id="st-reg">—</span></div>
+    <div class="tstat"><span class="tstat-l">∑ Categorias</span><span class="tstat-v" id="st-cat">—</span></div>
+  </div>
+
+  <div class="top-actions">
+    <button class="tbtn" onclick="exportCSV()">↓ CSV</button>
+    <button class="tbtn" id="btn-side" onclick="toggleSide()">⚙ Config</button>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="ctrl-grp">
+    <span class="ctrl-lbl">Visualizar</span>
+    <div class="seg" id="seg-view">
+      <button class="seg-b on" data-v="total"  onclick="setView('total',this)">Total período</button>
+      <button class="seg-b"    data-v="mes"    onclick="setView('mes',this)">Mês atual</button>
+      <button class="seg-b"    data-v="semana" onclick="setView('semana',this)">Semana</button>
+      <button class="seg-b"    data-v="custom" onclick="setView('custom',this)">Personalizado</button>
+    </div>
+  </div>
+
+  <div class="ctrl-grp" id="grp-custom">
+    <span class="ctrl-lbl">De</span>
+    <input class="view-date" type="date" id="inViewFrom" onchange="onViewDates()" oninput="onViewDates()">
+    <span class="ctrl-lbl">até</span>
+    <input class="view-date" type="date" id="inViewTo" onchange="onViewDates()" oninput="onViewDates()">
+    <span class="view-info" id="view-info"></span>
+  </div>
+
+  <div class="ctrl-grp">
+    <span class="ctrl-lbl">Regional</span>
+    <select class="fsel" id="fReg" onchange="regFilt=this.value; render()">
+      <option value="all">Todas</option>
+    </select>
+  </div>
+
+  <div class="ctrl-grp">
+    <span class="ctrl-lbl">Zoom</span>
+    <button class="zbtn" onclick="doZoom(-.15)">−</button>
+    <button class="zbtn" onclick="doZoom(+.15)">+</button>
+    <button class="zbtn" style="font-size:10px;font-family:'IBM Plex Mono',monospace;width:32px" onclick="doZoom(0)">1:1</button>
+  </div>
+
+  <div class="ctrl-grp" style="margin-left:auto; gap:5px">
+    <button class="seg-b on" style="border-radius:4px" onclick="openAll(true)">Expandir</button>
+    <button class="seg-b on" style="border-radius:4px" onclick="openAll(false)">Recolher</button>
+  </div>
+</div>
+
+<!-- CANVAS -->
+<div class="canvas-wrap">
+  <div class="canvas" id="canvas">
+    <div id="root"></div>
+  </div>
+</div>
+
+<!-- LEGEND -->
+<div class="legend">
+  <div class="leg"><div class="leg-dot" style="background:var(--l0-bg)"></div>Empresa</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--l1-bg)"></div>Regional</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--l2-bg)"></div>Cluster</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--l3-bg)"></div>Loja</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--l4-bg)"></div>Categoria</div>
+  <div class="leg"><div class="leg-dot" style="background:var(--l5-bg)"></div>Espécie</div>
+  <span style="margin-left:auto;font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--dim)">Clique no nó para expandir/recolher · hover para detalhes</span>
+</div>
+
+<!-- SIDE PANEL -->
+<div class="side" id="side">
+  <div class="side-head">
+    <span class="side-title">Configurar percentuais</span>
+    <button class="close-x" onclick="toggleSide()">×</button>
+  </div>
+  <div id="side-body"></div>
+</div>
+
+<!-- TOOLTIP -->
+<div class="tt" id="tt"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════════════
+
+const REGS = [
+  {id:'GO', label:'Regional GO',   n:20},
+  {id:'DF', label:'Regional DF',   n:20},
+  {id:'I1', label:'Interior 1',    n:19},
+  {id:'I2', label:'Interior 2+TO', n:20},
+  {id:'MA', label:'Maranhão',      n:11},
+  {id:'PA', label:'Regional PA',   n:15},
+  {id:'PI', label:'Piauí',         n:2},
+];
+
+const CLS = [
+  {id:'C1', label:'Cluster 1', sub:'Top 1–10'},
+  {id:'C2', label:'Cluster 2', sub:'Top 11–30'},
+  {id:'C3', label:'Cluster 3', sub:'Top 31–51'},
+  {id:'C4', label:'Cluster 4', sub:'Top 52–84'},
+  {id:'C5', label:'Cluster 5', sub:'Top 85–107'},
+];
+
+const STORES = [
+  [1,'CNJ NACIONAL DF','DF','C1'],[2,'BURITI SHOPPING','GO','C1'],[3,'SUPER LOJA MATRIZ','GO','C1'],
+  [4,'ANÁPOLIS 1','I1','C1'],[5,'CEILÂNDIA 2','DF','C1'],[6,'RIO VERDE GO','I2','C1'],
+  [7,'GARAVELO','GO','C1'],[8,'TAGUATINGA','DF','C1'],[9,'ANHANGUERA','GO','C1'],
+  [10,'P DAS ÁGUAS SHOP','GO','C1'],[11,'ANÁPOLIS 2','I1','C2'],[12,'ARAGUAÍNA TO','I2','C2'],
+  [13,'TRINDADE GO','GO','C2'],[14,'SANTARÉM PA','PA','C2'],[15,'PLANALTINA GO','DF','C2'],
+  [16,'JOÃO PAULO','MA','C2'],[17,'RUA GRANDE','MA','C2'],[18,'RECANTO DAS EMAS','DF','C2'],
+  [19,'SENADOR CANEDO','GO','C2'],[20,'VALPARAÍSO GO','DF','C2'],[21,'PLANALTINA DF','DF','C2'],
+  [22,'24 DE OUTUBRO','GO','C2'],[23,'RUA GRANDE II','MA','C2'],[24,'PALMAS TO','I2','C2'],
+  [25,'TERESINA 2','PI','C2'],[26,'PORTAL SHOPPING','GO','C2'],[27,'CATALÃO GO','I1','C2'],
+  [28,'PARANÓA','DF','C2'],[29,'AP DE GOIÂNIA','GO','C2'],[30,'SAMAMBAIA DF','DF','C2'],
+  [31,'ÁGUAS LINDAS GO','DF','C3'],[32,'GURUPI TO','I2','C3'],[33,'CALDAS NOVAS GO','I1','C3'],
+  [34,'NOVO GAMA','DF','C3'],[35,'GAMA DF','DF','C3'],[36,'TERESINA 1','PI','C3'],
+  [37,'SÃO SEBASTIÃO','DF','C3'],[38,'SHOPPING RIO ANIL','MA','C3'],[39,'SETOR SERRINHA','GO','C3'],
+  [40,'CASTANHEIRA','PA','C3'],[41,'LUZÍÂNIA GO','DF','C3'],[42,'GOIANÉSIA','I2','C3'],
+  [43,'TAQUARALTO TO','I2','C3'],[44,'COHAB','MA','C3'],[45,'MAIOBÃO','MA','C3'],
+  [46,'NUCLEO BANDEIRANTE','DF','C3'],[47,'SHOP. METROPOLE','PA','C3'],[48,'SANTA MARIA','DF','C3'],
+  [49,'CAMPINAS IV','GO','C3'],[50,'JATAÍ GO','I2','C3'],[51,'CAMPINAS 19','GO','C3'],
+  [52,'MINEIROS GO','I2','C4'],[53,'CASTANHAL PA','PA','C4'],[54,'APARECIDA SHOPPING','GO','C4'],
+  [55,'PORANGATU','I2','C4'],[56,'CIDADE OPERÁRIA','MA','C4'],[57,'BRAGANÇA PA','PA','C4'],
+  [58,'CIDADE NOVA','PA','C4'],[59,'SANTA HELENA GO','I2','C4'],[60,'FORMOSA GO','DF','C4'],
+  [61,'SNT ANTÔNIO DESC','DF','C4'],[62,'PIO XII','GO','C4'],[63,'ICOARACI','PA','C4'],
+  [64,'GUANABARA','GO','C4'],[65,'MANGALÔ','GO','C4'],[66,'MORRINHOS GO','I1','C4'],
+  [67,'ANNH II CENTRO','GO','C4'],[68,'SANTARÉM II','PA','C4'],[69,'JAIARA','I1','C4'],
+  [70,'PARAÍSO TO','I2','C4'],[71,'PALMEIRAS DE GOIÁS','I2','C4'],[72,'PORTO NACIONAL','I2','C4'],
+  [73,'BR 316 ANAN','PA','C4'],[74,'ALEXÂNIA GO','I1','C4'],[75,'SANTA INÊS','MA','C4'],
+  [76,'CAPANEMA PA','PA','C4'],[77,'GARAVELO 2','GO','C4'],[78,'BELA VISTA GO','I1','C4'],
+  [79,'GOIANIRA GO','I1','C4'],[80,'HIDROLÂNDIA','I1','C4'],[81,'BRAZLÂNDIA','DF','C4'],
+  [82,'ITABERAÍ GO','I1','C4'],[83,'GUAMÁ','PA','C4'],[84,'S.L. MONTES BELOS','I2','C4'],
+  [85,'13 DE MAIO','PA','C5'],[86,'PIRACANJUBA GO','I1','C5'],[87,'CRISTALINA GO','DF','C5'],
+  [88,'PEDREIRAS','PA','C5'],[89,'GUAPÓ GO','I1','C5'],[90,'ACREUNÁ GO','I1','C5'],
+  [91,'GOIATUBA','I1','C5'],[92,'BOM JESUS','I1','C5'],[93,'SANTARÉM III','PA','C5'],
+  [94,'PONTALINA','I1','C5'],[95,'INHUMAS GO','I1','C5'],[96,'JARAGUA','I2','C5'],
+  [97,'DISTRITO','PA','C5'],[98,'BACABAL MA','MA','C5'],[99,'QUIRINÓPOLIS','I2','C5'],
+  [100,'CHAPADINHA MA','MA','C5'],[101,'ITAPECURU MIRIM','MA','C5'],[102,'MAYSA II','GO','C5'],
+  [103,'MINAÇU','I2','C5'],[104,'URUAÇU','I2','C5'],[105,'ITAPACI','I2','C5'],
+  [106,'EDEIA GO','I1','C5'],[107,'RUBIATABA','I2','C5'],
+];
+
+const CATS = [
+  {id:'BR', label:'Branca',    pct:54.6, tk:1800,
+   sp:[{id:'LAV',l:'Lavadora',p:32},{id:'FOG',l:'Fogão',p:20},{id:'GEL',l:'Geladeira',p:25},
+       {id:'FRZ',l:'Freezer',p:5},{id:'MIC',l:'Micro-ondas',p:8},{id:'ARC',l:'Ar cond.',p:5},{id:'OUT',l:'Outros',p:5}]},
+  {id:'MV', label:'Móveis',    pct:23.1, tk:1400,
+   sp:[{id:'GRO',l:'Guarda-roupa',p:30},{id:'CAM',l:'Cama/Box',p:25},{id:'SOF',l:'Sofá',p:15},
+       {id:'MJA',l:'Mesa',p:12},{id:'COL',l:'Colchão',p:10},{id:'EST',l:'Estante',p:8}]},
+  {id:'MR', label:'Marrom',    pct:13.8, tk:1200,
+   sp:[{id:'TV',l:'TV',p:70},{id:'SOM',l:'Home theater',p:20},{id:'DVD',l:'DVD',p:10}]},
+  {id:'PT', label:'Portáteis', pct:8.5,  tk:180,
+   sp:[{id:'FRI',l:'Fritadeira',p:22},{id:'LIQ',l:'Liquidif.',p:20},{id:'CAF',l:'Cafeteira',p:18},
+       {id:'BAT',l:'Batedeira',p:15},{id:'VEN',l:'Ventilador',p:10},{id:'OUT',l:'Outros',p:15}]},
+  {id:'TL', label:'Telefonia', pct:0.0,  tk:900,
+   sp:[{id:'SMT',l:'Smartphone',p:70},{id:'TAB',l:'Tablet',p:15},{id:'ACE',l:'Acessório',p:15}]},
+];
+
+// ═══════════════════════════════════════════════════════════════════
+// MUTABLE STATE
+// ═══════════════════════════════════════════════════════════════════
+
+// Percentuais (todos em %)
+const pR  = {GO:24.8,DF:23.0,I1:13.5,I2:18.2,MA:9.8,PA:8.8,PI:1.9};
+// pC is now per-regional: pC[regId][clId] = weight %
+// Pre-populated from actual faturamento; user can override via panel
+const pC = {};
+function initPC() {
+  ['GO','DF','I1','I2','MA','PA','PI'].forEach(rg => {
+    pC[rg] = {};
+    ['C1','C2','C3','C4','C5'].forEach(cl => {
+      pC[rg][cl] = W_CL[rg+'_'+cl] || 0;
+    });
+  });
+}
+const pK  = {}; CATS.forEach(c => pK[c.id] = c.pct);
+const pS  = {}; CATS.forEach(c => c.sp.forEach(s => pS[c.id+'_'+s.id] = s.p));
+const TK  = {}; CATS.forEach(c => TK[c.id] = c.tk);
+
+// Store index
+const SIDX = {};
+STORES.forEach(([rk,nm,rg,cl]) => {
+  const k = rg+'_'+cl;
+  if(!SIDX[k]) SIDX[k] = [];
+  SIDX[k].push({rk,nm,rg,cl});
+});
+
+// Pesos por faturamento real — Regional × Cluster × Loja
+const FAT_STORE = {
+  1:2630225, 2:2170097, 3:1881858, 4:1795024, 5:1667354, 6:1462136, 7:1458215, 8:1448482, 9:1295069, 10:1280635, 11:1012131, 12:922414, 13:915646, 14:882593, 15:860791, 16:857439, 17:855860, 18:850225, 19:827556, 20:801029, 21:797152, 22:786347, 23:761545, 24:745539, 25:741018, 26:738685, 27:732161, 28:730344, 29:715731, 30:709949, 31:703536, 32:675947, 33:664953, 34:641181, 35:626823, 36:617682, 37:617125, 38:616277, 39:594114, 40:585553, 41:582823, 42:582361, 43:577394, 44:575718, 45:573007, 46:572956, 47:560763, 48:524312, 49:512757, 50:500451, 51:500295, 52:494931, 53:493322, 54:474107, 55:473620, 56:459359, 57:449107, 58:445408, 59:441002, 60:434848, 61:432300, 62:430124, 63:426025, 64:424654, 65:421128, 66:418285, 67:414689, 68:411451, 69:389387, 70:388973, 71:387498, 72:387334, 73:372122, 74:366940, 75:355887, 76:355457, 77:351219, 78:342414, 79:341469, 80:318078, 81:316815, 82:311313, 83:310196, 84:302488, 85:292482, 86:292198, 87:291431, 88:289203, 89:288415, 90:281594, 91:281321, 92:272335, 93:271842, 94:271292, 95:267361, 96:262824, 97:259777, 98:257496, 99:256491, 100:255499, 101:254913, 102:240872, 103:201873, 104:201873, 105:201873, 106:173541, 107:152268
+};
+
+// Peso de cada cluster dentro de cada regional (baseado no faturamento real)
+const W_CL = {};
+W_CL['GO_C1'] = 49.2027;
+W_CL['GO_C2'] = 24.2425;
+W_CL['GO_C3'] = 9.7796;
+W_CL['GO_C4'] = 15.3094;
+W_CL['GO_C5'] = 1.4657;
+W_CL['DF_C1'] = 35.3828;
+W_CL['DF_C2'] = 29.2462;
+W_CL['DF_C3'] = 26.2859;
+W_CL['DF_C4'] = 7.2905;
+W_CL['DF_C5'] = 1.7946;
+W_CL['I1_C1'] = 20.3513;
+W_CL['I1_C2'] = 19.7761;
+W_CL['I1_C3'] = 7.539;
+W_CL['I1_C4'] = 28.2066;
+W_CL['I1_C5'] = 24.1271;
+W_CL['I2_C1'] = 15.2;
+W_CL['I2_C2'] = 17.3397;
+W_CL['I2_C3'] = 24.2861;
+W_CL['I2_C4'] = 29.8967;
+W_CL['I2_C5'] = 13.2775;
+W_CL['MA_C1'] = 0.0;
+W_CL['MA_C2'] = 42.5012;
+W_CL['MA_C3'] = 30.3109;
+W_CL['MA_C4'] = 14.0004;
+W_CL['MA_C5'] = 13.1875;
+W_CL['PA_C1'] = 0.0;
+W_CL['PA_C2'] = 13.7791;
+W_CL['PA_C3'] = 17.8964;
+W_CL['PA_C4'] = 50.9436;
+W_CL['PA_C5'] = 17.381;
+W_CL['PI_C1'] = 0.0;
+W_CL['PI_C2'] = 54.5388;
+W_CL['PI_C3'] = 45.4612;
+W_CL['PI_C4'] = 0.0;
+W_CL['PI_C5'] = 0.0;
+
+// Peso de cada loja dentro do seu cluster regional (baseado no faturamento real)
+const W_STORE = {};
+W_STORE['GO_C1_2'] = 26.8381;
+W_STORE['GO_C1_3'] = 23.2734;
+W_STORE['GO_C1_7'] = 18.0341;
+W_STORE['GO_C1_9'] = 16.0164;
+W_STORE['GO_C1_10'] = 15.8379;
+W_STORE['GO_C2_13'] = 22.9833;
+W_STORE['GO_C2_19'] = 20.7722;
+W_STORE['GO_C2_22'] = 19.7378;
+W_STORE['GO_C2_26'] = 18.5415;
+W_STORE['GO_C2_29'] = 17.9653;
+W_STORE['GO_C3_39'] = 36.9666;
+W_STORE['GO_C3_49'] = 31.9044;
+W_STORE['GO_C3_51'] = 31.129;
+W_STORE['GO_C4_54'] = 18.8443;
+W_STORE['GO_C4_62'] = 17.0961;
+W_STORE['GO_C4_64'] = 16.8787;
+W_STORE['GO_C4_65'] = 16.7385;
+W_STORE['GO_C4_67'] = 16.4826;
+W_STORE['GO_C4_77'] = 13.9599;
+W_STORE['GO_C5_102'] = 100.0;
+W_STORE['DF_C1_1'] = 45.7744;
+W_STORE['DF_C1_5'] = 29.0173;
+W_STORE['DF_C1_8'] = 25.2083;
+W_STORE['DF_C2_15'] = 18.1239;
+W_STORE['DF_C2_18'] = 17.9014;
+W_STORE['DF_C2_20'] = 16.8656;
+W_STORE['DF_C2_21'] = 16.7839;
+W_STORE['DF_C2_28'] = 15.3773;
+W_STORE['DF_C2_30'] = 14.9479;
+W_STORE['DF_C3_31'] = 16.4811;
+W_STORE['DF_C3_34'] = 15.0203;
+W_STORE['DF_C3_35'] = 14.684;
+W_STORE['DF_C3_37'] = 14.4568;
+W_STORE['DF_C3_41'] = 13.6532;
+W_STORE['DF_C3_46'] = 13.4221;
+W_STORE['DF_C3_48'] = 12.2825;
+W_STORE['DF_C4_60'] = 36.7282;
+W_STORE['DF_C4_61'] = 36.513;
+W_STORE['DF_C4_81'] = 26.7589;
+W_STORE['DF_C5_87'] = 100.0;
+W_STORE['I1_C1_4'] = 100.0;
+W_STORE['I1_C2_11'] = 58.0253;
+W_STORE['I1_C2_27'] = 41.9747;
+W_STORE['I1_C3_33'] = 100.0;
+W_STORE['I1_C4_66'] = 16.8129;
+W_STORE['I1_C4_69'] = 15.6513;
+W_STORE['I1_C4_74'] = 14.7491;
+W_STORE['I1_C4_78'] = 13.7633;
+W_STORE['I1_C4_79'] = 13.7253;
+W_STORE['I1_C4_80'] = 12.7851;
+W_STORE['I1_C4_82'] = 12.5132;
+W_STORE['I1_C5_86'] = 13.7307;
+W_STORE['I1_C5_89'] = 13.553;
+W_STORE['I1_C5_90'] = 13.2324;
+W_STORE['I1_C5_91'] = 13.2196;
+W_STORE['I1_C5_92'] = 12.7974;
+W_STORE['I1_C5_94'] = 12.7483;
+W_STORE['I1_C5_95'] = 12.5636;
+W_STORE['I1_C5_106'] = 8.1549;
+W_STORE['I2_C1_6'] = 100.0;
+W_STORE['I2_C2_12'] = 55.3022;
+W_STORE['I2_C2_24'] = 44.6978;
+W_STORE['I2_C3_32'] = 28.9342;
+W_STORE['I2_C3_42'] = 24.9282;
+W_STORE['I2_C3_43'] = 24.7156;
+W_STORE['I2_C3_50'] = 21.422;
+W_STORE['I2_C4_52'] = 17.2099;
+W_STORE['I2_C4_55'] = 16.4689;
+W_STORE['I2_C4_59'] = 15.3347;
+W_STORE['I2_C4_70'] = 13.5255;
+W_STORE['I2_C4_71'] = 13.4742;
+W_STORE['I2_C4_72'] = 13.4685;
+W_STORE['I2_C4_84'] = 10.5182;
+W_STORE['I2_C5_96'] = 20.5781;
+W_STORE['I2_C5_99'] = 20.0823;
+W_STORE['I2_C5_103'] = 15.8059;
+W_STORE['I2_C5_104'] = 15.8059;
+W_STORE['I2_C5_105'] = 15.8059;
+W_STORE['I2_C5_107'] = 11.922;
+W_STORE['MA_C2_16'] = 34.6462;
+W_STORE['MA_C2_17'] = 34.5824;
+W_STORE['MA_C2_23'] = 30.7714;
+W_STORE['MA_C3_38'] = 34.9165;
+W_STORE['MA_C3_44'] = 32.6185;
+W_STORE['MA_C3_45'] = 32.4649;
+W_STORE['MA_C4_56'] = 56.3461;
+W_STORE['MA_C4_75'] = 43.6539;
+W_STORE['MA_C5_98'] = 33.5321;
+W_STORE['MA_C5_100'] = 33.2721;
+W_STORE['MA_C5_101'] = 33.1958;
+W_STORE['PA_C2_14'] = 100.0;
+W_STORE['PA_C3_40'] = 51.0813;
+W_STORE['PA_C3_47'] = 48.9187;
+W_STORE['PA_C4_53'] = 15.1183;
+W_STORE['PA_C4_57'] = 13.7633;
+W_STORE['PA_C4_58'] = 13.6499;
+W_STORE['PA_C4_63'] = 13.0559;
+W_STORE['PA_C4_68'] = 12.6093;
+W_STORE['PA_C4_73'] = 11.404;
+W_STORE['PA_C4_76'] = 10.8933;
+W_STORE['PA_C4_83'] = 9.5062;
+W_STORE['PA_C5_85'] = 26.2715;
+W_STORE['PA_C5_88'] = 25.977;
+W_STORE['PA_C5_93'] = 24.4176;
+W_STORE['PA_C5_97'] = 23.3339;
+W_STORE['PI_C2_25'] = 100.0;
+W_STORE['PI_C3_36'] = 100.0;
+
+// App state
+let meta     = 45_000_000;
+let metaFrom = null;
+let metaTo   = null;
+let viewFrom = null;
+let viewTo   = null;
+let viewMode = 'total';
+let regFilt  = 'all';
+let scale    = 1;
+
+// Expand/collapse state (true=open)
+const OPN = {};
+function isOpen(id) {
+  if (id in OPN) return OPN[id];
+  // defaults: empresa + regionais open; everything else closed
+  return id === 'E' || id.startsWith('R_');
+}
+function toggle(id) { OPN[id] = !isOpen(id); render(); }
+function openAll(v) {
+  ['E', ...REGS.map(r=>'R_'+r.id),
+   ...REGS.flatMap(r=>CLS.map(c=>'C_'+r.id+'_'+c.id)),
+   ...STORES.map(([rk])=>'S_'+rk),
+   ...STORES.flatMap(([rk])=>CATS.map(k=>'K_'+rk+'_'+k.id))
+  ].forEach(k => OPN[k] = v);
+  OPN['E'] = true;
+  render();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// DATE HELPERS
+// ═══════════════════════════════════════════════════════════════════
+
+function d8601(d) {
+  return d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate());
+}
+function dBR(d) {
+  return p2(d.getDate())+'/'+p2(d.getMonth()+1)+'/'+d.getFullYear();
+}
+function p2(n) { return String(n).padStart(2,'0'); }
+function parseD(s) { return s ? new Date(s+'T00:00:00') : null; }
+function diffDays(a,b) { return Math.max(1,Math.round((b-a)/86400000)+1); }
+
+// Days in meta period
+function metaDays() {
+  if(!metaFrom||!metaTo) return 1;
+  return diffDays(metaFrom, metaTo);
+}
+
+// Effective days = overlap of view range with meta period
+function effectiveDays() {
+  if(!metaFrom||!metaTo||!viewFrom||!viewTo) return metaDays();
+  const s = new Date(Math.max(viewFrom, metaFrom));
+  const e = new Date(Math.min(viewTo,   metaTo));
+  if(s > e) return 0;
+  return diffDays(s, e);
+}
+
+// Meta to display (linear proportion)
+function metaVis() {
+  const eff = effectiveDays();
+  const tot = metaDays();
+  if(eff === 0) return 0;
+  return tot > 0 ? meta * eff / tot : 0;
+}
+
+// Show warning banner if view range has zero overlap with meta period
+function checkViewOverlap() {
+  let warn = document.getElementById('overlap-warn');
+  if(effectiveDays() === 0 && metaFrom && metaTo && viewFrom && viewTo) {
+    if(!warn) {
+      warn = document.createElement('div');
+      warn.id = 'overlap-warn';
+      warn.style.cssText = 'background:#FAECE7;color:#4A1B0C;font-family:"IBM Plex Mono",monospace;font-size:10px;padding:6px 20px;text-align:center;border-bottom:1px solid #D85A30;letter-spacing:.03em;';
+      warn.textContent = '⚠ O intervalo de visualização não tem sobreposição com o período da meta — todos os valores estão zerados.';
+      document.querySelector('.controls').insertAdjacentElement('afterend', warn);
+    }
+    warn.style.display = '';
+  } else {
+    if(warn) warn.style.display = 'none';
+  }
+}
+
+function viewInfoText() {
+  const eff = effectiveDays();
+  const tot = metaDays();
+  const pct = tot > 0 ? Math.round(eff/tot*100) : 0;
+  if(viewMode==='total') return tot+' dias (100%)';
+  return eff+' dias ('+pct+'% do período)';
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// CONTROLS
+// ═══════════════════════════════════════════════════════════════════
+
+function onMeta(v) {
+  meta = parseFloat(v.replace(/\./g,'').replace(',','.')) || 0;
+  updateStats(); render();
+}
+
+function onMetaDates() {
+  metaFrom = parseD(document.getElementById('inMetaFrom').value);
+  metaTo   = parseD(document.getElementById('inMetaTo').value);
+  // keep view in sync if mode=total
+  if(viewMode==='total') syncViewToMeta();
+  updateStats(); render();
+}
+
+function syncViewToMeta() {
+  viewFrom = metaFrom;
+  viewTo   = metaTo;
+  if(viewFrom) document.getElementById('inViewFrom').value = d8601(viewFrom);
+  if(viewTo)   document.getElementById('inViewTo').value   = d8601(viewTo);
+}
+
+function onViewDates() {
+  viewFrom = parseD(document.getElementById('inViewFrom').value);
+  viewTo   = parseD(document.getElementById('inViewTo').value);
+  // auto-switch to custom
+  viewMode = 'custom';
+  document.querySelectorAll('#seg-view .seg-b').forEach(b => b.classList.toggle('on', b.dataset.v==='custom'));
+  updateStats(); render();
+}
+
+function setView(mode, btn) {
+  viewMode = mode;
+  document.querySelectorAll('#seg-view .seg-b').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+
+  const today = new Date();
+  const y = today.getFullYear(), m = today.getMonth();
+
+  if(mode === 'total') {
+    syncViewToMeta();
+  } else if(mode === 'mes') {
+    viewFrom = new Date(y, m, 1);
+    viewTo   = new Date(y, m+1, 0);
+    document.getElementById('inViewFrom').value = d8601(viewFrom);
+    document.getElementById('inViewTo').value   = d8601(viewTo);
+  } else if(mode === 'semana') {
+    const dow = today.getDay() || 7;
+    viewFrom = new Date(today); viewFrom.setDate(today.getDate()-dow+1);
+    viewTo   = new Date(today); viewTo.setDate(today.getDate()-dow+7);
+    document.getElementById('inViewFrom').value = d8601(viewFrom);
+    document.getElementById('inViewTo').value   = d8601(viewTo);
+  }
+  // custom: keep existing dates, just show them
+  updateStats(); render();
+}
+
+function doZoom(d) {
+  scale = d===0 ? 1 : Math.max(0.2, Math.min(2, scale+d));
+  document.getElementById('canvas').style.transform = `scale(${scale})`;
+}
+
+// populate regional filter
+REGS.forEach(r => {
+  const o = document.createElement('option');
+  o.value = r.id; o.textContent = r.label;
+  document.getElementById('fReg').appendChild(o);
+});
+
+function sumOf(o) { return Object.values(o).reduce((a,b)=>a+(+b||0),0); }
+function scls(s)  { return Math.abs(s-100)<0.1?'sok':Math.abs(s-100)<3?'swrn':'serr'; }
+function wgtTk()  { return CATS.reduce((s,c)=>s+(pK[c.id]||0)/100*(TK[c.id]||0),0); }
+
+function fmtR(n) {
+  if(!n||n===0) return '—';
+  if(n>=1e6) return 'R$ '+(n/1e6).toFixed(2).replace('.',',')+' M';
+  if(n>=1e3) return 'R$ '+(n/1e3).toFixed(1).replace('.',',')+' k';
+  return 'R$ '+Math.round(n).toLocaleString('pt-BR');
+}
+function fmtRF(n) { return n ? 'R$ '+Math.round(n).toLocaleString('pt-BR') : '—'; }
+function fmtQty(n) {
+  if(!n||n<=0) return null;
+  if(n>=1e6) return (n/1e6).toFixed(1)+'M un';
+  if(n>=1e3) return Math.round(n/1e3)+'k un';
+  return Math.round(n)+' un';
+}
+
+function updateStats() {
+  const mv = metaVis();
+  document.getElementById('st-mp').textContent  = fmtR(mv);
+  document.getElementById('st-view').textContent = viewInfoText();
+  function sv(id,s) {
+    const e=document.getElementById(id);
+    e.textContent = Math.abs(s-100)<0.1 ? '✓ 100%' : s.toFixed(1)+'%';
+    e.style.color = Math.abs(s-100)<0.1 ? '#6ee7b7' : '#fcd34d';
+  }
+  sv('st-reg', sumOf(pR));
+  sv('st-cat', sumOf(pK));
+  document.getElementById('view-info').textContent = viewInfoText();
+  checkViewOverlap();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TOOLTIP
+// ═══════════════════════════════════════════════════════════════════
+
+const ttEl = document.getElementById('tt');
+function showTT(e, rows) {
+  ttEl.innerHTML = '<div class="tt-name">'+rows._name+'</div>'+
+    Object.entries(rows).filter(([k])=>k!=='_name')
+      .map(([k,v])=>`<div class="tt-row"><span>${k}</span><span>${v}</span></div>`).join('');
+  ttEl.style.display = 'block'; moveTT(e);
+}
+function moveTT(e) {
+  let x=e.clientX+14, y=e.clientY+14;
+  if(x+210>window.innerWidth)  x=e.clientX-220;
+  if(y+130>window.innerHeight) y=e.clientY-140;
+  ttEl.style.left=x+'px'; ttEl.style.top=y+'px';
+}
+function hideTT() { ttEl.style.display='none'; }
+
+// ═══════════════════════════════════════════════════════════════════
+// NODE BUILDER
+// ═══════════════════════════════════════════════════════════════════
+
+function mkNode(id, {rank, name, val, pct, qty, bar, lv, tt}) {
+  const open = isOpen(id);
+  const hasKids = true; // determined by caller; passed as canToggle
+  const div = document.createElement('div');
+  // canToggle passed via hasKids param — actually we just always set and caller decides
+  div.className = 'nb l'+lv;
+
+  let html = '';
+  if(rank != null) html += `<div class="nb-rank">#${rank}</div>`;
+  html += `<div class="nb-name">${name}</div>`;
+  if(val) html += `<div class="nb-val">${val}</div>`;
+  if(pct) html += `<div class="nb-pct">${pct}</div>`;
+  if(qty) html += `<div class="nb-qty">${qty}</div>`;
+  if(bar != null) html += `<div class="nb-bar"><div class="nb-bar-fill" style="width:${Math.min(+bar||0,100).toFixed(1)}%"></div></div>`;
+  div.innerHTML = html;
+
+  if(tt) {
+    div.onmouseenter = e => showTT(e, tt);
+    div.onmousemove  = moveTT;
+    div.onmouseleave = hideTT;
+  }
+  return div;
+}
+
+// Make a toggleable node box (with chevron + click handler)
+function mkToggle(id, opts) {
+  const box = mkNode(id, opts);
+  const open = isOpen(id);
+  box.classList.add('togglable');
+  if(!open) box.classList.add('shut');
+  box.onclick = e => { e.stopPropagation(); toggle(id); };
+  return box;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// TREE ASSEMBLY
+// ═══════════════════════════════════════════════════════════════════
+
+function stem(h) {
+  const d = document.createElement('div');
+  d.className = 'oc-stem'; d.style.height = h+'px'; return d;
+}
+
+function attach(parent, children, sh) {
+  if(!children.length) return;
+  parent.appendChild(stem(sh));
+
+  const conn = document.createElement('div');
+  conn.className = 'oc-conn'; conn.style.height = sh+'px';
+  const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+  svg.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;pointer-events:none';
+  conn.appendChild(svg);
+  parent.appendChild(conn);
+
+  const row = document.createElement('div');
+  row.className = 'oc-row';
+  children.forEach(c => row.appendChild(c));
+  parent.appendChild(row);
+
+  requestAnimationFrame(() => {
+    const cols = [...row.children];
+    if(!cols.length) return;
+    svg.innerHTML = '';
+    const sr = svg.getBoundingClientRect();
+    if(!sr.width) return;
+    const stroke = getComputedStyle(document.documentElement).getPropertyValue('--border2').trim() || '#c0bdb2';
+    const cx = cols.map(c => { const r=c.getBoundingClientRect(); return r.left+r.width/2-sr.left; });
+    const y  = sh;
+    function ln(x1,y1,x2,y2) {
+      const l = document.createElementNS('http://www.w3.org/2000/svg','line');
+      l.setAttribute('x1',x1); l.setAttribute('y1',y1);
+      l.setAttribute('x2',x2); l.setAttribute('y2',y2);
+      l.setAttribute('stroke',stroke); l.setAttribute('stroke-width','1');
+      svg.appendChild(l);
+    }
+    if(cx.length===1) { ln(cx[0],0,cx[0],y+sh); return; }
+    ln(cx[0],y,cx[cx.length-1],y);          // horizontal bar
+    cx.forEach(x => ln(x,y,x,y+sh));        // drops
+    ln((cx[0]+cx[cx.length-1])/2,0,(cx[0]+cx[cx.length-1])/2,y); // parent stem up
+  });
+}
+
+function col(el) {
+  const d = document.createElement('div');
+  d.className = 'oc-col'; d.appendChild(el); return d;
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════════════════════
+
+function render() {
+  const root = document.getElementById('root');
+  root.innerHTML = '';
+  root.style.cssText = 'display:flex;flex-direction:column;align-items:center';
+
+  const mv  = metaVis();
+  const wt  = wgtTk();
+  const regs = regFilt==='all' ? REGS : REGS.filter(r=>r.id===regFilt);
+
+  // ── L0 Empresa ──
+  const eCol = document.createElement('div'); eCol.className = 'oc-col';
+  const eBox = mkToggle('E', {
+    name:'META EMPRESA', val:fmtR(mv),
+    pct:'107 lojas · '+viewInfoText(),
+    qty:fmtQty(CATS.reduce((s,c)=>{const km=mv*(pK[c.id]||0)/100;const tk=TK[c.id]||0;return s+(tk>0?km/tk:0);},0)), bar:null, lv:0,
+    tt:{_name:'Meta Empresa','Meta visualizada':fmtRF(mv),'Período meta':metaFrom&&metaTo?dBR(metaFrom)+' → '+dBR(metaTo):'—','Visualizando':viewInfoText(),'Vendas':fmtQty(CATS.reduce((s,c)=>{const km=mv*(pK[c.id]||0)/100;const tk=TK[c.id]||0;return s+(tk>0?km/tk:0);},0))||'—'}
+  });
+  eCol.appendChild(eBox);
+  root.appendChild(eCol);
+  if(!isOpen('E')) return;
+
+  // ── L1 Regionais ──
+  const rCols = regs.map(reg => {
+    const rid  = 'R_'+reg.id;
+    const rM   = mv*(pR[reg.id]||0)/100;
+    const rQ   = CATS.reduce((s2,cat2)=>{
+      const kM2=rM*(pK[cat2.id]||0)/100; const tk2=TK[cat2.id]||0;
+      return s2+(tk2>0?kM2/tk2:0);
+    },0);
+    const rCol = document.createElement('div'); rCol.className='oc-col';
+    const rBox = mkToggle(rid, {
+      name:reg.label, val:fmtR(rM),
+      pct:(pR[reg.id]||0).toFixed(1)+'% empresa',
+      qty:fmtQty(rQ), bar:pR[reg.id]||0, lv:1,
+      tt:{_name:reg.label,'Meta':fmtRF(rM),'Part.empresa':(pR[reg.id]||0).toFixed(1)+'%','Lojas':reg.n,'Vendas':fmtQty(rQ)||'—'}
+    });
+    rCol.appendChild(rBox);
+
+    if(isOpen(rid)) {
+      // ── L2 Clusters ──
+      const cCols = CLS.map(cl => {
+        const lojas = SIDX[reg.id+'_'+cl.id] || [];
+        if(!lojas.length) return null;
+        const cid  = 'C_'+reg.id+'_'+cl.id;
+        const cM   = rM*((pC[reg.id]&&pC[reg.id][cl.id])||0)/100;
+        const cQ   = CATS.reduce((s2,cat2)=>{
+          const kM2=cM*(pK[cat2.id]||0)/100; const tk2=TK[cat2.id]||0;
+          return s2+(tk2>0?kM2/tk2:0);
+        },0);
+        const cCol = document.createElement('div'); cCol.className='oc-col';
+        const cBox = mkToggle(cid, {
+          name:cl.label, val:fmtR(cM),
+          pct:((pC[reg.id]&&pC[reg.id][cl.id])||0).toFixed(1)+'% reg · '+cl.sub,
+          qty:fmtQty(cQ), bar:pC[cl.id]||0, lv:2,
+          tt:{_name:cl.label+' — '+reg.label,'Meta':fmtRF(cM),'Part.regional':((pC[reg.id]&&pC[reg.id][cl.id])||0).toFixed(1)+'%','Lojas nesta reg.':lojas.length,'Vendas':fmtQty(cQ)||'—'}
+        });
+        cCol.appendChild(cBox);
+
+        if(isOpen(cid)) {
+          // ── L3 Lojas ──
+          // total faturamento of this cluster×regional (for weight calc)
+          const clTotalFat = lojas.reduce((s,l)=>s+(W_STORE[reg.id+'_'+cl.id+'_'+l.rk]||0),0);
+          const sCols = lojas.map(loja => {
+            const storeW = clTotalFat>0 ? (W_STORE[reg.id+'_'+cl.id+'_'+loja.rk]||0)/clTotalFat : 1/lojas.length;
+            const sM = cM * storeW;
+            const sQ = wt>0 ? sM/wt : 0;
+            const sid  = 'S_'+loja.rk;
+            const sCol = document.createElement('div'); sCol.className='oc-col';
+            // store qty = sum of all category quantities (consistent with cat level)
+            const sQtyCats = CATS.reduce((sum,cat)=>{
+              const kM2 = sM*(pK[cat.id]||0)/100;
+              const tk2 = TK[cat.id]||0;
+              return sum + (tk2>0 ? kM2/tk2 : 0);
+            }, 0);
+            const sBox = mkToggle(sid, {
+              rank:loja.rk, name:loja.nm, val:fmtR(sM),
+              pct:null, qty:fmtQty(sQtyCats), bar:null, lv:3,
+              tt:{_name:'#'+loja.rk+' '+loja.nm,'Meta':fmtRF(sM),'Cluster':cl.label,'Regional':reg.label,'Vendas est.':fmtQty(sQtyCats)||'—'}
+            });
+            sCol.appendChild(sBox);
+
+            if(isOpen(sid)) {
+              // ── L4 Categorias ──
+              const kCols = CATS.map(cat => {
+                const kid  = 'K_'+loja.rk+'_'+cat.id;
+                const kM   = sM*(pK[cat.id]||0)/100;
+                const tk   = TK[cat.id]||0;
+                const kQ   = tk>0 ? kM/tk : 0;
+                const kCol = document.createElement('div'); kCol.className='oc-col';
+                const kBox = mkToggle(kid, {
+                  name:cat.label, val:fmtR(kM),
+                  pct:(pK[cat.id]||0).toFixed(1)+'%',
+                  qty:fmtQty(kQ), bar:pK[cat.id]||0, lv:4,
+                  tt:{_name:cat.label,'Meta':fmtRF(kM),'Part.loja':(pK[cat.id]||0).toFixed(1)+'%','Ticket médio':'R$ '+(tk).toLocaleString('pt-BR'),'Vendas':fmtQty(kQ)||'—'}
+                });
+                kCol.appendChild(kBox);
+
+                if(isOpen(kid)) {
+                  // ── L5 Espécies ──
+                  const spCols = cat.sp.map(sp => {
+                    const spM  = kM*(pS[cat.id+'_'+sp.id]||0)/100;
+                    const spQ  = tk>0 ? spM/tk : 0;
+                    const spCol= document.createElement('div'); spCol.className='oc-col';
+                    const spBox= mkNode('SP_'+loja.rk+'_'+cat.id+'_'+sp.id, {
+                      name:sp.l, val:fmtR(spM),
+                      pct:(pS[cat.id+'_'+sp.id]||0).toFixed(0)+'%',
+                      qty:fmtQty(spQ), bar:pS[cat.id+'_'+sp.id]||0, lv:5,
+                      tt:{_name:sp.l,'Meta':fmtRF(spM),'Part.categoria':(pS[cat.id+'_'+sp.id]||0).toFixed(0)+'%','Vendas':fmtQty(spQ)||'—'}
+                    });
+                    spCol.appendChild(spBox);
+                    return col(spCol);
+                  });
+                  attach(kCol, spCols, 12);
+                }
+                return col(kCol);
+              });
+              attach(sCol, kCols, 14);
+            }
+            return col(sCol);
+          });
+          attach(cCol, sCols, 16);
+        }
+        return col(cCol);
+      }).filter(Boolean);
+      attach(rCol, cCols, 20);
+    }
+    return col(rCol);
+  });
+  attach(eCol, rCols, 22);
+  updateStats();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// SIDE PANEL
+// ═══════════════════════════════════════════════════════════════════
+
+let sideOpen = false;
+function toggleSide() {
+  sideOpen = !sideOpen;
+  document.getElementById('side').classList.toggle('open', sideOpen);
+  document.getElementById('btn-side').classList.toggle('active', sideOpen);
+  if(sideOpen) buildSide();
+}
+
+function buildSide() {
+  const body = document.getElementById('side-body');
+  body.innerHTML = '';
+
+  // Ticket médio
+  addSec(body, 'Ticket médio por categoria', CATS.map(c=>({id:c.id,label:c.label})), TK, true, 'R$', false);
+  // Regionais
+  addSec(body, 'Regionais (%)', REGS.map(r=>({id:r.id,label:r.label})), pR, false, '%', true);
+  // Clusters — per regional
+  REGS.forEach(reg => {
+    if(!pC[reg.id]) return;
+    addSec(body, 'Clusters · '+reg.label, CLS.map(c=>({id:c.id,label:c.label+' '+c.sub})), pC[reg.id]||{}, false, '%', true);
+  });
+  // Categorias
+  addSec(body, 'Categorias (%)', CATS.map(c=>({id:c.id,label:c.label})), pK, false, '%', true);
+  // Espécies
+  CATS.forEach(cat => {
+    const obj = {};
+    cat.sp.forEach(s => obj[cat.id+'_'+s.id] = pS[cat.id+'_'+s.id]);
+    addSec(body, 'Espécies · '+cat.label, cat.sp.map(s=>({id:cat.id+'_'+s.id,label:s.l})), obj, false, '%', true);
+  });
+}
+
+function addSec(body, title, items, obj, firstOpen, sign, showSum) {
+  const wrap = document.createElement('div'); wrap.className='psec';
+  const hd   = document.createElement('div'); hd.className='psec-hd';
+  const sum  = () => sumOf(obj);
+  const badge= document.createElement('span');
+
+  function updBadge() {
+    if(!showSum) { badge.style.display='none'; return; }
+    const s = sum();
+    badge.className='sbadge '+scls(s);
+    badge.textContent=s.toFixed(1)+'%';
+  }
+  updBadge();
+
+  hd.append(Object.assign(document.createElement('span'),{textContent:title}), badge);
+  const bd = document.createElement('div');
+  bd.className = 'psec-bd'+(firstOpen?' open':'');
+
+  items.forEach(({id,label}) => {
+    const row = document.createElement('div'); row.className='prow';
+    const lbl = document.createElement('div'); lbl.className='prow-lbl'; lbl.textContent=label; lbl.title=label;
+    const inp = document.createElement('input');
+    inp.type='number'; inp.min=0; inp.step=sign==='%'?0.1:10; inp.className='prow-inp';
+    inp.style.width = sign==='R$'?'72px':'62px';
+    inp.value = (parseFloat(obj[id])||0).toFixed(sign==='%'?1:0);
+    inp.oninput = () => {
+      obj[id] = parseFloat(inp.value)||0;
+      updBadge();
+      render();
+    };
+    const sg = document.createElement('span'); sg.className='prow-sign'; sg.textContent=sign;
+    row.append(lbl,inp,sg); bd.appendChild(row);
+  });
+
+  hd.onclick = () => bd.classList.toggle('open');
+  wrap.append(hd,bd); body.appendChild(wrap);
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// EXPORT CSV
+// ═══════════════════════════════════════════════════════════════════
+
+function exportCSV() {
+  const mv = metaVis();
+  const rows = [['regional','cluster','rank','loja','categoria','especie',
+    'pct_reg','pct_cluster','pct_cat','pct_sp','meta_RS','vendas_un'].join(';')];
+  REGS.forEach(r => {
+    const rM = mv*(pR[r.id]||0)/100;
+    CLS.forEach(cl => {
+      const lojas = SIDX[r.id+'_'+cl.id]||[];
+      if(!lojas.length) return;
+      const cM = rM*(pC[cl.id]||0)/100;
+      const sM = lojas.length ? cM/lojas.length : 0;
+      lojas.forEach(loja => {
+        CATS.forEach(cat => {
+          const kM = sM*(pK[cat.id]||0)/100;
+          const tk = TK[cat.id]||0;
+          cat.sp.forEach(sp => {
+            const spM = kM*(pS[cat.id+'_'+sp.id]||0)/100;
+            const qty = tk>0 ? Math.round(spM/tk) : 0;
+            rows.push([r.label,cl.label,loja.rk,loja.nm,cat.label,sp.l,
+              (pR[r.id]||0).toFixed(2),(pC[cl.id]||0).toFixed(2),
+              (pK[cat.id]||0).toFixed(2),(pS[cat.id+'_'+sp.id]||0).toFixed(2),
+              Math.round(spM),qty].join(';'));
+          });
+        });
+      });
+    });
+  });
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(new Blob(['\uFEFF'+rows.join('\n')],{type:'text/csv;charset=utf-8'}));
+  a.download='metas_cnj.csv'; a.click();
+}
+
+// ═══════════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════════
+
+(function init() {
+  const today = new Date();
+  const q = Math.floor(today.getMonth()/3);
+  metaFrom = new Date(today.getFullYear(), q*3, 1);
+  metaTo   = new Date(today.getFullYear(), q*3+3, 0);
+  viewFrom = metaFrom;
+  viewTo   = metaTo;
+  initPC();
+  document.getElementById('inMetaFrom').value = d8601(metaFrom);
+  document.getElementById('inMetaTo').value   = d8601(metaTo);
+  document.getElementById('inViewFrom').value = d8601(viewFrom);
+  document.getElementById('inViewTo').value   = d8601(viewTo);
+  render();
+})();
+</script>
+</body>
+</html>
