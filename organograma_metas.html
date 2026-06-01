@@ -120,6 +120,12 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
 .prow-inp { width: 62px; text-align: right; border: 0.5px solid var(--border2); border-radius: 4px; padding: 3px 5px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; outline: none; background: var(--bg); color: var(--text); }
 .prow-inp:focus { border-color: var(--text); }
 .prow-sign { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--dim); }
+
+.ptabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 15px 4px; }
+.ptab  { padding: 3px 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .1em; border: 0.5px solid var(--border2); border-radius: 4px; background: none; color: var(--muted); cursor: pointer; transition: all .1s; }
+.ptab.on       { background: var(--ink); color: #f0efe8; border-color: var(--ink); }
+.ptab:hover:not(.on) { background: var(--bg); color: var(--text); }
+.cl-note { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--dim); padding: 0 15px 8px; letter-spacing: .05em; }
 </style>
 </head>
 <body>
@@ -944,11 +950,8 @@ function buildSide() {
   addSec(body, 'Ticket médio por categoria', CATS.map(c=>({id:c.id,label:c.label})), TK, true, 'R$', false);
   // Regionais
   addSec(body, 'Regionais (%)', REGS.map(r=>({id:r.id,label:r.label})), pR, false, '%', true);
-  // Clusters — per regional
-  REGS.forEach(reg => {
-    if(!pC[reg.id]) return;
-    addSec(body, 'Clusters · '+reg.label, CLS.map(c=>({id:c.id,label:c.label+' '+c.sub})), pC[reg.id]||{}, false, '%', true);
-  });
+  // Clusters — single section with regional tabs
+  addClusterSec(body);
   // Categorias
   addSec(body, 'Categorias (%)', CATS.map(c=>({id:c.id,label:c.label})), pK, false, '%', true);
   // Espécies
@@ -957,6 +960,70 @@ function buildSide() {
     cat.sp.forEach(s => obj[cat.id+'_'+s.id] = pS[cat.id+'_'+s.id]);
     addSec(body, 'Espécies · '+cat.label, cat.sp.map(s=>({id:cat.id+'_'+s.id,label:s.l})), obj, false, '%', true);
   });
+}
+
+function addClusterSec(body) {
+  let activeReg = REGS[0].id;
+
+  const wrap = document.createElement('div'); wrap.className='psec';
+  const hd   = document.createElement('div'); hd.className='psec-hd';
+  const badge= document.createElement('span');
+
+  function updBadge() {
+    const s = sumOf(pC[activeReg]||{});
+    badge.className='sbadge '+scls(s);
+    badge.textContent=s.toFixed(1)+'%';
+  }
+  updBadge();
+
+  hd.append(Object.assign(document.createElement('span'),{textContent:'Clusters por Regional'}), badge);
+
+  const bd = document.createElement('div'); bd.className='psec-bd';
+
+  // tab bar
+  const tabBar = document.createElement('div'); tabBar.className='ptabs';
+  // rows area
+  const rowsDiv = document.createElement('div'); rowsDiv.style.padding='0 15px 6px';
+  // note
+  const note = document.createElement('div'); note.className='cl-note';
+
+  function renderRows(regId) {
+    rowsDiv.innerHTML=''; note.textContent='';
+    const obj  = pC[regId]||{};
+    const avail = CLS.filter(cl=>(SIDX[regId+'_'+cl.id]||[]).length>0);
+    avail.forEach(cl => {
+      const row = document.createElement('div'); row.className='prow';
+      const lbl = document.createElement('div'); lbl.className='prow-lbl';
+      lbl.textContent=cl.label+' · '+cl.sub; lbl.title=cl.label+' · '+cl.sub;
+      const inp = document.createElement('input');
+      inp.type='number'; inp.min=0; inp.max=100; inp.step=0.1; inp.className='prow-inp';
+      inp.value=(parseFloat(obj[cl.id])||0).toFixed(1);
+      inp.oninput=()=>{ pC[regId][cl.id]=parseFloat(inp.value)||0; updBadge(); render(); };
+      const sg=document.createElement('span'); sg.className='prow-sign'; sg.textContent='%';
+      row.append(lbl,inp,sg); rowsDiv.appendChild(row);
+    });
+    if(avail.length < CLS.length) {
+      const missing = CLS.filter(cl=>!(SIDX[regId+'_'+cl.id]||[]).length);
+      note.textContent = 'Sem lojas: '+missing.map(c=>c.id).join(', ');
+    }
+  }
+
+  REGS.forEach(reg => {
+    const tab=document.createElement('button'); tab.className='ptab'+(reg.id===activeReg?' on':'');
+    tab.textContent=reg.id; tab.title=reg.label;
+    tab.onclick=()=>{
+      activeReg=reg.id;
+      tabBar.querySelectorAll('.ptab').forEach(t=>t.classList.remove('on'));
+      tab.classList.add('on');
+      updBadge(); renderRows(activeReg);
+    };
+    tabBar.appendChild(tab);
+  });
+
+  renderRows(activeReg);
+  bd.append(tabBar, rowsDiv, note);
+  hd.onclick=()=>bd.classList.toggle('open');
+  wrap.append(hd,bd); body.appendChild(wrap);
 }
 
 function addSec(body, title, items, obj, firstOpen, sign, showSum) {
