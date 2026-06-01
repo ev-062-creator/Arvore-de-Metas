@@ -1077,9 +1077,13 @@ function exportCSV() {
     CLS.forEach(cl => {
       const lojas = SIDX[r.id+'_'+cl.id]||[];
       if(!lojas.length) return;
-      const cM = rM*(pC[cl.id]||0)/100;
-      const sM = lojas.length ? cM/lojas.length : 0;
+      const clPct = (pC[r.id]&&pC[r.id][cl.id])||0;
+      const cM = rM * clPct / 100;
+      // mesma lógica de peso por loja do render()
+      const clTotalW = lojas.reduce((s,l)=>s+(W_STORE[r.id+'_'+cl.id+'_'+l.rk]||0),0);
       lojas.forEach(loja => {
+        const storeW = clTotalW>0 ? (W_STORE[r.id+'_'+cl.id+'_'+loja.rk]||0)/clTotalW : 1/lojas.length;
+        const sM = cM * storeW;
         CATS.forEach(cat => {
           const kM = sM*(pK[cat.id]||0)/100;
           const tk = TK[cat.id]||0;
@@ -1087,7 +1091,7 @@ function exportCSV() {
             const spM = kM*(pS[cat.id+'_'+sp.id]||0)/100;
             const qty = tk>0 ? Math.round(spM/tk) : 0;
             rows.push([r.label,cl.label,loja.rk,loja.nm,cat.label,sp.l,
-              (pR[r.id]||0).toFixed(2),(pC[cl.id]||0).toFixed(2),
+              (pR[r.id]||0).toFixed(2), clPct.toFixed(2),
               (pK[cat.id]||0).toFixed(2),(pS[cat.id+'_'+sp.id]||0).toFixed(2),
               Math.round(spM),qty].join(';'));
           });
