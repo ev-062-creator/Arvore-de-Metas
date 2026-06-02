@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>CNJ — Organograma de Metas</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -126,9 +127,55 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
 .ptab.on       { background: var(--ink); color: #f0efe8; border-color: var(--ink); }
 .ptab:hover:not(.on) { background: var(--bg); color: var(--text); }
 .cl-note { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--dim); padding: 0 15px 8px; letter-spacing: .05em; }
+
+/* ── AUTH ── */
+#auth-wall { position: fixed; inset: 0; background: #09090700; z-index: 9999; display: flex; align-items: center; justify-content: center; backdrop-filter: blur(2px); background: rgba(9,9,7,.92); }
+.auth-card { background: #111110; border: 1px solid #2a2a28; border-radius: 14px; padding: 40px 44px; width: 360px; display: flex; flex-direction: column; gap: 14px; box-shadow: 0 24px 60px rgba(0,0,0,.6); }
+.auth-brand { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .18em; color: #444; text-transform: uppercase; margin-bottom: 4px; }
+.auth-title { font-family: 'IBM Plex Sans', sans-serif; font-size: 20px; font-weight: 500; color: #f0efe8; }
+.auth-sub   { font-size: 12px; color: #666; line-height: 1.55; }
+.auth-input { background: #1a1a18; border: 1px solid #2e2e2c; border-radius: 7px; color: #f0efe8; font-family: 'IBM Plex Mono', monospace; font-size: 13px; padding: 10px 13px; outline: none; width: 100%; transition: border-color .15s; }
+.auth-input:focus { border-color: #534AB7; box-shadow: 0 0 0 3px rgba(83,74,183,.15); }
+.auth-otp-input { font-size: 24px; letter-spacing: .4em; text-align: center; padding: 12px; }
+.auth-btn { background: #26215C; border: 1px solid #534AB7; color: #EEEDFE; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .08em; padding: 11px; border-radius: 7px; cursor: pointer; transition: all .15s; width: 100%; margin-top: 2px; }
+.auth-btn:hover:not(:disabled) { background: #2e2870; border-color: #6860cc; }
+.auth-btn:disabled { opacity: .45; cursor: not-allowed; }
+.auth-back { background: none; border: none; color: #555; font-family: 'IBM Plex Mono', monospace; font-size: 10px; cursor: pointer; padding: 0; text-align: left; transition: color .12s; }
+.auth-back:hover { color: #999; }
+.auth-msg { font-family: 'IBM Plex Mono', monospace; font-size: 10px; min-height: 14px; letter-spacing: .02em; }
+.auth-msg.ok  { color: #6ee7b7; }
+.auth-msg.err { color: #fca5a5; }
 </style>
 </head>
 <body>
+
+<!-- AUTH WALL -->
+<div id="auth-wall">
+  <div class="auth-card">
+
+    <div id="auth-step-email">
+      <div class="auth-brand">CNJ // Organograma de Metas</div>
+      <div class="auth-title">Acesso restrito</div>
+      <div class="auth-sub">Digite seu e-mail para receber o código de acesso.</div>
+      <input id="auth-email" class="auth-input" type="email" placeholder="seu@email.com"
+             onkeydown="if(event.key==='Enter') authSendOTP()" autocomplete="email" autofocus>
+      <button class="auth-btn" onclick="authSendOTP()">Enviar código</button>
+      <div id="auth-msg-email" class="auth-msg"></div>
+    </div>
+
+    <div id="auth-step-otp" style="display:none">
+      <div class="auth-brand">CNJ // Organograma de Metas</div>
+      <div class="auth-title">Verifique seu e-mail</div>
+      <div class="auth-sub" id="auth-otp-sub">Insira o código de 6 dígitos enviado para o seu e-mail.</div>
+      <input id="auth-otp" class="auth-input auth-otp-input" type="text" inputmode="numeric"
+             placeholder="······" maxlength="6" onkeydown="if(event.key==='Enter') authVerifyOTP()">
+      <button class="auth-btn" onclick="authVerifyOTP()">Validar acesso</button>
+      <button class="auth-back" onclick="authBack()">← Usar outro e-mail</button>
+      <div id="auth-msg-otp" class="auth-msg"></div>
+    </div>
+
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -231,6 +278,66 @@ body { font-family: 'IBM Plex Sans', sans-serif; background: var(--bg); color: v
 <div class="tt" id="tt"></div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════
+// AUTH
+// ═══════════════════════════════════════════════════════════════════
+
+const _SB = supabase.createClient(
+  'https://nmflzyluvmtukqhwrorx.supabase.co',
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5tZmx6eWx1dm10dWtxaHdyb3J4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAyNTU5MTgsImV4cCI6MjA5NTgzMTkxOH0.82PhxMOts-FDL2L1hpxRfpky8hnDv_t17E_gOZItHiw'
+);
+
+let _authEmail = '';
+
+(async () => {
+  const { data: { session } } = await _SB.auth.getSession();
+  if (session) document.getElementById('auth-wall').style.display = 'none';
+})();
+
+async function authSendOTP() {
+  const email = document.getElementById('auth-email').value.trim();
+  if (!email) return;
+  const btn  = document.querySelector('#auth-step-email .auth-btn');
+  const msg  = document.getElementById('auth-msg-email');
+  btn.disabled = true; btn.textContent = 'Enviando…';
+  msg.className = 'auth-msg'; msg.textContent = '';
+  const { error } = await _SB.auth.signInWithOtp({ email, options: { shouldCreateUser: true } });
+  if (error) {
+    msg.className = 'auth-msg err'; msg.textContent = error.message;
+    btn.disabled = false; btn.textContent = 'Enviar código';
+  } else {
+    _authEmail = email;
+    document.getElementById('auth-otp-sub').textContent = 'Código enviado para ' + email + '. Verifique sua caixa de entrada.';
+    document.getElementById('auth-step-email').style.display = 'none';
+    document.getElementById('auth-step-otp').style.display  = '';
+    setTimeout(() => document.getElementById('auth-otp').focus(), 50);
+  }
+}
+
+async function authVerifyOTP() {
+  const token = document.getElementById('auth-otp').value.trim();
+  if (token.length < 6) return;
+  const btn = document.querySelector('#auth-step-otp .auth-btn');
+  const msg = document.getElementById('auth-msg-otp');
+  btn.disabled = true; btn.textContent = 'Validando…';
+  msg.className = 'auth-msg'; msg.textContent = '';
+  const { error } = await _SB.auth.verifyOtp({ email: _authEmail, token, type: 'email' });
+  if (error) {
+    msg.className = 'auth-msg err'; msg.textContent = 'Código inválido ou expirado.';
+    btn.disabled = false; btn.textContent = 'Validar acesso';
+  } else {
+    document.getElementById('auth-wall').style.display = 'none';
+  }
+}
+
+function authBack() {
+  document.getElementById('auth-step-otp').style.display  = 'none';
+  document.getElementById('auth-step-email').style.display = '';
+  document.getElementById('auth-msg-email').textContent   = '';
+  const btn = document.querySelector('#auth-step-email .auth-btn');
+  btn.disabled = false; btn.textContent = 'Enviar código';
+}
+
 // ═══════════════════════════════════════════════════════════════════
 // DATA
 // ═══════════════════════════════════════════════════════════════════
